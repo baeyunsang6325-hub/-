@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>가입/문의 | 목포해양대학교 윈드서핑 동아리</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="join.html" data-title="가입/문의">
+
+<div class="container">
+
+  <section>
+    <h1>📞 가입 / 문의</h1>
+  </section>
+
+  <section class="card">
+    <h2 style="margin-top:0">동아리 소개</h2>
+    <p>목포해양대학교 윈드서핑 동아리는 초보자도 부담 없이 시작할 수 있는 동아리입니다. 장비는 동아리에서 제공하며, 기초부터 차근차근 배웁니다.</p>
+  </section>
+
+  <section class="card">
+    <h2 style="margin-top:0">모집 안내</h2>
+    <div class="row"><span>활동 장소</span><span class="muted">목포해양대학교 계류장</span></div>
+    <div class="row"><span>정기회의</span><span class="muted">매주 수요일 저녁 7시</span></div>
+    <div class="row"><span>정기 라이딩</span><span class="muted">주 1~2회 (일정 참고)</span></div>
+    <div class="row"><span>회비</span><span class="muted">학기당 100,000원</span></div>
+  </section>
+
+  <section class="card">
+    <h2 style="margin-top:0">문의처</h2>
+    <p>오픈채팅 / SNS를 통해 편하게 문의해주세요. (실제 링크는 운영진이 등록 예정)</p>
+  </section>
+
+  <section class="join">
+    <h2 style="margin-top:0">가입 신청</h2>
+    <p>아래 정보를 남겨주시면 운영진이 연락드립니다.</p>
+    <form id="joinForm">
+      <input type="text" id="name" placeholder="이름" required>
+      <input type="tel" id="phone" placeholder="연락처" required>
+      <input type="email" id="email" placeholder="이메일" required>
+      <textarea id="message" placeholder="하고 싶은 말 (선택)"></textarea>
+      <button type="submit">신청하기</button>
+    </form>
+    <p id="formMsg"></p>
+  </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/supabase-client.js"></script>
+<script src="assets/nav.js"></script>
+<script>
+  document.getElementById('joinForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const submitBtn = this.querySelector('button');
+    const msgEl = document.getElementById('formMsg');
+    const name = document.getElementById('name').value;
+    const phone = document.getElementById('phone').value;
+    const email = document.getElementById('email').value;
+    const message = document.getElementById('message').value;
+
+    submitBtn.disabled = true;
+    msgEl.textContent = '전송 중...';
+
+    const { error } = await supabaseClient
+      .from('signups')
+      .insert([{ name, phone, email, message }]);
+
+    submitBtn.disabled = false;
+
+    if (error) {
+      console.error(error);
+      msgEl.textContent = '전송에 실패했습니다. 잠시 후 다시 시도해주세요.';
+      return;
+    }
+
+    msgEl.textContent = `${name}님, 가입 신청이 접수되었습니다! 🎉`;
+    this.reset();
+  });
+</script>
+</body>
+</html>
