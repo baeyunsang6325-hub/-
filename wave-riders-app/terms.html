@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>윈드서핑 용어 | 목포해양대학교 윈드서핑 동아리</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="more.html" data-title="윈드서핑 용어">
+
+<div class="container">
+
+  <section>
+    <h1>📖 윈드서핑 용어</h1>
+    <input type="text" id="searchBox" placeholder="용어 검색 (예: 자이빙)" style="margin-top:10px;">
+  </section>
+
+  <section id="termList" class="terms"></section>
+
+</div>
+
+<script src="assets/nav.js"></script>
+<script>
+  const TERMS = [
+    { term: '리깅', desc: '보드에 세일·마스트·붐을 조립해 장비를 완성하는 과정' },
+    { term: '디리깅', desc: '리깅의 반대, 장비를 분해해 정리하는 과정' },
+    { term: '업홀', desc: '물에 젖은 세일을 업홀 라인으로 끌어올리는 동작' },
+    { term: '마스트', desc: '세일을 세우는 지지대' },
+    { term: '붐', desc: '양손으로 잡고 조종하는 손잡이 파이프' },
+    { term: '세일', desc: '바람을 받는 천 장비' },
+    { term: '풍상', desc: '바람이 불어오는 방향' },
+    { term: '풍하', desc: '바람이 불어가는 방향' },
+    { term: '태킹', desc: '풍상 쪽으로 방향을 전환하는 기술' },
+    { term: '자이빙', desc: '풍하 쪽으로 방향을 전환하는 기술' },
+    { term: '포트', desc: '보드의 좌현(왼쪽)' },
+    { term: '스타보드', desc: '보드의 우현(오른쪽)' },
+    { term: '하네스', desc: '세일의 힘을 몸으로 분산시키는 장비' },
+    { term: '풋스트랩', desc: '발을 고정하는 보드 위의 끈' },
+    { term: '워터스타트', desc: '물에서 세일 힘만으로 일어서는 기술' },
+    { term: '플래닝', desc: '보드가 물 위로 떠올라 활주하는 상태' },
+  ];
+
+  function render(list) {
+    document.getElementById('termList').innerHTML = list.map(t =>
+      `<div class="term-item"><b>${t.term}</b> — ${t.desc}</div>`
+    ).join('');
+  }
+  render(TERMS);
+
+  document.getElementById('searchBox').addEventListener('input', function(){
+    const q = this.value.trim().toLowerCase();
+    render(TERMS.filter(t => t.term.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q)));
+  });
+</script>
+</body>
+</html>

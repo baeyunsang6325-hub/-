@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>날씨 / 라이딩 정보 | 목포해양대학교 윈드서핑 동아리</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="more.html" data-title="날씨 / 라이딩 정보">
+
+<div class="container">
+
+  <section>
+    <h1>🌬️ 날씨 / 라이딩 정보</h1>
+  </section>
+
+  <section class="card">
+    <h2 style="margin-top:0">현재 날씨 (예시 데이터)</h2>
+    <div class="grid2">
+      <div class="stat"><div class="num">6m/s</div><div class="label">풍속</div></div>
+      <div class="stat"><div class="num">NW</div><div class="label">풍향</div></div>
+      <div class="stat"><div class="num">21°C</div><div class="label">기온</div></div>
+      <div class="stat"><div class="num">0.3m</div><div class="label">파고</div></div>
+    </div>
+    <p class="muted" style="margin-top:10px;">※ 실시간 기상 API 연동 예정 (현재는 예시 데이터)</p>
+  </section>
+
+  <section class="card">
+    <h2 style="margin-top:0">예보</h2>
+    <div class="row"><span>오늘</span><span class="muted">맑음 · 풍속 5~7m/s</span></div>
+    <div class="row"><span>내일</span><span class="muted">흐림 · 풍속 8~10m/s</span></div>
+    <div class="row"><span>이번 주</span><span class="muted">주말 강풍 예보 주의</span></div>
+  </section>
+
+  <section class="card" style="border:2px solid var(--amber);">
+    <p style="font-weight:700;color:var(--navy);">⚠️ 날씨 정보는 참고자료입니다. 사이트가 자동으로 출항 여부를 결정하지 않으며, 최종 판단은 운영진과 본인의 안전점검을 따릅니다.</p>
+  </section>
+
+</div>
+
+<script src="assets/nav.js"></script>
+</body>
+</html>

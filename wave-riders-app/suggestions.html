@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>건의함 | 목포해양대학교 윈드서핑 동아리</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="more.html" data-title="건의함">
+
+<div class="container">
+
+  <section>
+    <h1>💡 건의함</h1>
+    <p class="muted">건의함은 회의를 대체하지 않습니다. 등록된 의견은 매주 수요일 정기회의에서 논의됩니다.</p>
+  </section>
+
+  <section>
+    <h2>최근 건의 현황</h2>
+    <div class="card">
+      <div class="row"><b>업홀 라인 여분 구매 요청</b><span class="badge green">채택</span></div>
+      <p class="muted">분야: 장비 · 09.24 정기회의에서 논의</p>
+    </div>
+    <div class="card">
+      <div class="row"><b>초보자 교육 횟수 확대</b><span class="badge amber">회의 예정</span></div>
+      <p class="muted">분야: 교육 · 다음 정기회의(10.01) 논의 예정</p>
+    </div>
+  </section>
+
+  <section class="join">
+    <h2 style="margin-top:0">건의 등록</h2>
+    <form id="suggestForm">
+      <input type="text" id="s-title" placeholder="제목" required>
+      <select id="s-category">
+        <option value="라이딩">라이딩</option>
+        <option value="장비">장비</option>
+        <option value="교육">교육</option>
+        <option value="일정">일정</option>
+        <option value="동아리 운영">동아리 운영</option>
+        <option value="기타">기타</option>
+      </select>
+      <textarea id="s-content" placeholder="내용" required></textarea>
+      <input type="text" id="s-author" placeholder="작성자 (이름)" required>
+      <label style="display:flex;align-items:center;gap:8px;color:var(--white);font-size:0.9rem;">
+        <input type="checkbox" id="s-anonymous" style="width:18px;height:18px;"> 익명으로 등록
+      </label>
+      <button type="submit">건의 등록하기</button>
+    </form>
+    <p id="formMsg"></p>
+  </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/supabase-client.js"></script>
+<script src="assets/nav.js"></script>
+<script>
+  document.getElementById('suggestForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const submitBtn = this.querySelector('button');
+    const msgEl = document.getElementById('formMsg');
+    const title = document.getElementById('s-title').value;
+    const category = document.getElementById('s-category').value;
+    const content = document.getElementById('s-content').value;
+    const author = document.getElementById('s-author').value;
+    const anonymous = document.getElementById('s-anonymous').checked;
+
+    submitBtn.disabled = true;
+    msgEl.textContent = '등록 중...';
+
+    const { error } = await supabaseClient
+      .from('suggestions')
+      .insert([{ title, category, content, author, anonymous, status: '회의 예정' }]);
+
+    submitBtn.disabled = false;
+
+    if (error) {
+      console.error(error);
+      msgEl.textContent = '등록에 실패했습니다. 잠시 후 다시 시도해주세요.';
+      return;
+    }
+
+    msgEl.textContent = '건의가 등록되었습니다. 정기회의에서 논의될 예정입니다. 🙌';
+    this.reset();
+  });
+</script>
+</body>
+</html>

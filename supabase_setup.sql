@@ -17,3 +17,28 @@ create policy "Allow anonymous insert"
   for insert
   to anon
   with check (true);
+
+create table if not exists suggestions (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  category text not null,
+  content text not null,
+  author text not null,
+  anonymous boolean not null default false,
+  status text not null default '회의 예정',
+  created_at timestamptz not null default now()
+);
+
+alter table suggestions enable row level security;
+
+create policy "Allow anonymous insert suggestions"
+  on suggestions
+  for insert
+  to anon
+  with check (true);
+
+create policy "Allow anonymous read suggestions"
+  on suggestions
+  for select
+  to anon
+  using (true);

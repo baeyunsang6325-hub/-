@@ -1,10 +1,9 @@
 const NAV_ITEMS = [
   { href: 'index.html', icon: '🏠', label: '홈' },
+  { href: 'learn.html', icon: '🏄', label: '배우기' },
   { href: 'safety.html', icon: '🦺', label: '안전교육' },
-  { href: 'equipment.html', icon: '🧰', label: '장비' },
   { href: 'schedule.html', icon: '📅', label: '일정' },
-  { href: 'notices.html', icon: '📢', label: '공지' },
-  { href: 'join.html', icon: '📞', label: '가입/문의' },
+  { href: 'more.html', icon: '☰', label: '전체메뉴' },
 ];
 
 function renderNav(activeHref) {
