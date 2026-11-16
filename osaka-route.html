@@ -1,0 +1,211 @@
+<title>오사카 2박3일 경로</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: schematic Osaka map left, step card + timeline right; stacks on phones */
+:root{
+  --bg:#eef2f4; --panel:#ffffff; --fg:#17262e; --muted:#5d7079; --line:#d3dde2;
+  --sea:#cfe3ee; --land:#f6f8f7; --river:#bcd6e4;
+  --d1:#d6452b; --d2:#1d7f8c; --d3:#7b5ea7; --accent:#d6452b;
+  --head:'Space Grotesk','Noto Sans KR',sans-serif; --body:'Noto Sans KR',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1a20; --panel:#16252d; --fg:#e6eef1; --muted:#93a8b1; --line:#294048;
+  --sea:#12303d; --land:#1b2c34; --river:#1d4254; --d1:#ff7a5c; --d2:#4cc3d1; --d3:#b79cf0; --accent:#ff7a5c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1a20; --panel:#16252d; --fg:#e6eef1; --muted:#93a8b1; --line:#294048;
+  --sea:#12303d; --land:#1b2c34; --river:#1d4254; --d1:#ff7a5c; --d2:#4cc3d1; --d3:#b79cf0; --accent:#ff7a5c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);margin:0;
+  padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));line-height:1.55}
+.wrap{max-width:1100px;margin:0 auto;display:grid;gap:16px}
+h1{font-family:var(--head);font-size:clamp(22px,4vw,32px);margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:2px 0 0;font-size:14px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab,.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:8px 14px;border-radius:8px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--c);border-color:var(--c);color:#fff;font-weight:700}
+.tab:focus-visible,.btn:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.main{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px}
+@media(max-width:820px){.main{grid-template-columns:minmax(0,1fr)}}
+.map{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px}
+svg{width:100%;height:auto;display:block}
+.lbl{font-size:2.4px;fill:var(--muted);font-family:var(--body)}
+.pt{font-size:2.5px;fill:var(--fg);font-family:var(--body);font-weight:700;paint-order:stroke;stroke:var(--land);stroke-width:.7px}
+.route{fill:none;stroke:var(--c);stroke-width:.9;stroke-linecap:round;stroke-linejoin:round}
+.route.air{stroke-dasharray:1.6 1.6}
+.seg{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .9s forwards ease}
+.seg.air{stroke-dasharray:1.6 1.6;stroke-dashoffset:0;animation:fade .9s}
+.seg.done{animation:none;stroke-dashoffset:0}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.dot{fill:var(--panel);stroke:var(--c);stroke-width:.8}
+.dot.cur{fill:var(--c);stroke:var(--panel);stroke-width:.6}
+.side{display:grid;gap:12px;align-content:start;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.step-time{font-family:var(--head);font-size:13px;color:var(--c);font-weight:700;letter-spacing:.04em}
+.step-name{font-size:20px;font-weight:700;margin:2px 0 6px;text-wrap:balance}
+.step-note{margin:0;color:var(--fg);font-size:15px}
+.ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn.primary{background:var(--c);border-color:var(--c);color:#fff;font-weight:700}
+input[type=range]{flex:1;min-width:120px;accent-color:var(--c)}
+ol.tl{list-style:none;margin:0;padding:0;max-height:300px;overflow:auto;display:grid;gap:2px}
+ol.tl li{display:grid;grid-template-columns:48px 1fr;gap:8px;padding:6px 8px;border-radius:6px;font-size:13.5px;cursor:pointer;color:var(--muted)}
+ol.tl li b{font-family:var(--head);font-variant-numeric:tabular-nums}
+ol.tl li.on{color:var(--fg)}
+ol.tl li.cur{background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--fg)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+h2{font-family:var(--head);font-size:17px;margin:0 0 10px}
+.bar{display:grid;grid-template-columns:110px 1fr 64px;gap:8px;align-items:center;font-size:13px;margin:6px 0}
+.bar i{display:block;height:10px;border-radius:5px;background:var(--d2)}
+.bar span:last-child{text-align:right;font-variant-numeric:tabular-nums}
+ul.plain{margin:0;padding-left:18px;font-size:14px}
+ul.plain li{margin:3px 0}
+.small{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+@media(prefers-reduced-motion:reduce){.seg{animation:none;stroke-dashoffset:0}}
+</style>
+
+<div class="wrap" id="app" style="--c:var(--d1)">
+  <header>
+    <h1>오사카 2박 3일 활동 경로</h1>
+    <p class="sub">2026.11.06~11.08 · 노션 백업 로그 기준 실제 이동 기록 (지도는 위치 관계만 나타낸 약식 지도)</p>
+  </header>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div class="main">
+    <div class="map">
+      <svg viewBox="0 0 100 100" role="img" aria-label="오사카 약식 이동 경로 지도">
+        <rect width="100" height="100" rx="3" fill="var(--sea)"/>
+        <path d="M30 0 L100 0 L100 100 L24 100 L18 84 L22 70 L16 58 L26 46 L20 34 L30 22 L26 10 Z" fill="var(--land)"/>
+        <path d="M52 14 C46 22 40 26 30 28 M52 14 C60 20 70 24 82 22" fill="none" stroke="var(--river)" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M44 31 C46 40 54 46 62 52 C66 58 62 66 56 74" fill="none" stroke="var(--river)" stroke-width="1.6" stroke-linecap="round"/>
+        <text class="lbl" x="3" y="40">오사카만</text>
+        <text class="lbl" x="3" y="94">간사이공항 방면 ↓</text>
+        <g id="places"></g>
+        <g id="routes"></g>
+        <g id="dots"></g>
+      </svg>
+    </div>
+    <div class="side">
+      <div class="card" aria-live="polite">
+        <div class="step-time" id="st"></div>
+        <div class="step-name" id="sn"></div>
+        <p class="step-note" id="sno"></p>
+      </div>
+      <div class="card">
+        <div class="ctl">
+          <button class="btn primary" id="play">▶ 재생</button>
+          <button class="btn" id="prev" aria-label="이전">◀</button>
+          <button class="btn" id="next" aria-label="다음">▶</button>
+          <input type="range" id="rng" min="0" max="1" value="0" aria-label="진행 위치">
+        </div>
+      </div>
+      <div class="card"><ol class="tl" id="tl"></ol></div>
+    </div>
+  </div>
+
+  <div class="facts">
+    <section class="card">
+      <h2>확인된 지출 (엔)</h2>
+      <div id="bars"></div>
+      <p class="small">그 밖에: 요시노야 가라아게 덮밥 약 7,800원, 돈키호테 쇼핑 약 11만 원, 항공 487,000원 안팎(왕복), 숙소 71,632원. 소고기덮밥·이온 등 금액 미확인.</p>
+    </section>
+    <section class="card">
+      <h2>먹은 것</h2>
+      <ul class="plain">
+        <li>요시노야 가라아게 덮밥 (11/6 점심)</li>
+        <li>세븐일레븐 밀크티와 간식, 닭꼬치 덮밥</li>
+        <li>쿠라스시 16점: 네기토로, 와규 니기리, 된장버터콘라멘, 생맥주</li>
+        <li>덴덴타운 야끼만두, 볶음밥, 사케</li>
+        <li>가라아게 가게 소고기덮밥 (늦은 저녁)</li>
+        <li>간사이공항 야끼소바빵, 연어 오니기리, 9% 레몬 츄하이</li>
+      </ul>
+    </section>
+    <section class="card">
+      <h2>못 간 곳, 못 산 것</h2>
+      <ul class="plain">
+        <li>야사카 신사, 스미요시타이샤 (17시 마감)</li>
+        <li>다이마루 점프샵, 가이유칸</li>
+        <li>죠죠 스탠드 DIO 단품 (스루가야 등에서 못 찾음)</li>
+        <li>오사카성 천수각 (컨디션 때문에 생략)</li>
+        <li>교토 후시미이나리·기요미즈 (늦잠으로 일정에서 삭제)</li>
+        <li>THE★JOJO WORLD OSAKA는 12/4 오픈이라 이번 여행 이후</li>
+      </ul>
+    </section>
+    <section class="card">
+      <h2>항공과 숙소</h2>
+      <ul class="plain">
+        <li>7C1391 ICN 08:05 → KIX 09:50, 좌석 9F</li>
+        <li>7C1392 KIX 10:50 → ICN 12:55, 좌석 4F</li>
+        <li>아크로 캡슐 호텔 난바 도톤보리 2박</li>
+        <li>귀국 후 KTX 427 광명 15:50 → 목포</li>
+        <li>일본 면세는 11/1부터 환급 방식, 공항 단말기에서 여권 확인 완료</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<script>
+var P={KIX:[13,89],ICN:[5,96],HOTEL:[51,64],NAMBA:[49,60],DEN:[52,70],CAS:[64,38],OSK:[47,27],UME:[50,31],SKY:[45,21],TEMP:[22,52],NISHI:[43,30],AEON:[56,59],KURA:[54,65],TAN:[58,50],DON:[50,62]};
+var DAYS=[
+ {n:'11/6 금',c:'--d1',s:[
+  ['06:00','인천공항 T1',P.ICN,'하나은행에서 10,000엔 수령(5천엔 1장+천엔 5장), 보안·출국심사 통과, 게이트 125로 이동.'],
+  ['09:50','간사이공항 T2 도착',P.KIX,'7C1391 착륙, 입국 완료(VJW QR). eSIM 연결 확인.','air'],
+  ['10:43','난카이 공항급행 → 난바',P.HOTEL,'ICOCA 3,000엔(보증금 500 포함) 구입 후 난바행 탑승.'],
+  ['12:17','요시노야 도톤보리',P.NAMBA,'이마이 우동은 웨이팅이 길어 포기. 가라아게 덮밥 약 7,800원, 맛있고 양 많음.'],
+  ['12:55','다니마치큐초메 환승',P.TAN,'센니치마에선에서 다니마치선으로 환승. 방향이 헷갈려 2번 승강장으로 이동.'],
+  ['14:00','오사카성',P.CAS,'천수각은 안 올라가고 경치 위주로 구경. 14:43 종료, 계획보다 1시간 일찍 끝남.'],
+  ['15:22','JR 오사카역',P.OSK,'오사카조코엔역에서 환상선 4정거장. 세븐일레븐에서 밀크티와 간식.'],
+  ['16:31','우메다 죠죠 굿즈',P.UME,'리멘트 2개 약 3,300엔, 실버 채리엇과 죠셉이 나옴. 목표였던 DIO는 내일로.'],
+  ['17:08','우메다 스카이빌딩',P.SKY,'공중정원 입장. 연무로 일몰은 약했지만 노을색은 남음. 일반 엘리베이터로 7층에 잘못 올라감.'],
+  ['19:00','난바 호텔 체크인',P.HOTEL,'HEP FIVE 관람차는 취소. 샤워와 충전 후 22:30 취침.']]},
+ {n:'11/7 토',c:'--d2',s:[
+  ['09:30','기상, 호텔 출발',P.HOTEL,'약 10시간 자고 늦게 기상. 교토 일정은 삭제하고 오사카 안에서만 이동.'],
+  ['10:51','쿠라스시 난바 니혼바시점',P.KURA,'16점에 3,395엔(약 28,700원). 네기토로, 와규 니기리, 된장버터콘라멘, 생맥주.'],
+  ['12:06','덴덴타운 오타로드',P.DEN,'타이토 스테이션에서 킬러퀸 피규어 구경. 치이카와 굿즈 1,950엔.'],
+  ['14:29','JR 오사카역 서쪽 출구',P.OSK,'미도스지선으로 우메다 이동. 이노게이트 1층에서 분수소년 확인.'],
+  ['15:11','니시우메다 공원',P.NISHI,'편의점에서 산 음식을 공원에서 먹음.'],
+  ['17:33','덴포잔 대관람차',P.TEMP,'일몰 시간에 탑승(900엔). 가이유칸은 패스.'],
+  ['18:13','덴덴타운 재방문',P.DEN,'애니메이트 닛폰바시와 스루가야 확인. 죠죠 굿즈는 있으나 DIO 없음.'],
+  ['20:38','도톤보리 식사와 뽑기',P.DON,'야끼만두, 볶음밥, 사케. 뽑기 1,700엔은 실패.'],
+  ['21:44','돈키호테 도톤보리',P.DON,'선물 쇼핑 약 11만 원. 눈 핫팩, 입욕제, 핸드크림, 파스, 안약, 킷캣, 사케.'],
+  ['00:36','히가시신사이바시 이온',P.AEON,'24시간 매장에서 하나가쓰오 확인(70g 478엔). 호객꾼은 대꾸 없이 지나침.'],
+  ['02:00','호텔 도착',P.HOTEL,'소고기덮밥으로 늦은 저녁 후 샤워. 6시간도 못 자고 귀국 준비.']]},
+ {n:'11/8 일',c:'--d3',s:[
+  ['07:22','호텔 체크아웃',P.HOTEL,'난카이 난바역으로 이동. ICOCA 잔액 50엔이라 공항역에서 정산하기로 함.'],
+  ['08:42','간사이공항 T2',P.KIX,'세관 TAX REFUND 단말기에서 여권 스캔으로 면세 확인 완료.'],
+  ['09:08','수하물 위탁, 출국심사',P.KIX,'10kg 위탁 완료(표 7C674114), 09:23 출국심사 통과. 아침은 못 먹음.'],
+  ['10:50','7C1392 이륙',P.ICN,'게이트 B81, 좌석 4F 창가. 맥주와 레몬 츄하이를 마시고 어지러웠음.','air'],
+  ['12:55','인천 도착, 귀국',P.ICN,'KTX 427 광명 15:50 → 목포 18:01 도착. 환급금 입금과 영수증 보관 확인 남음.']]}
+];
+var PLACES=[['난바·도톤보리',[44,67]],['덴덴타운',[56,73]],['우메다',[50,26]],['오사카성',[67,37]],['덴포잔',[24,55]],['다니마치',[60,52]],['인천',[8,96]],['간사이공항',[16,89]]];
+var NS='http://www.w3.org/2000/svg',day=0,idx=0,timer=null;
+var $=function(i){return document.getElementById(i)};
+function mk(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+PLACES.forEach(function(p){var t=mk('text',{class:'lbl',x:p[1][0],y:p[1][1]},$('places'));t.textContent=p[0]});
+var tabs=$('tabs');
+DAYS.forEach(function(d,i){var b=document.createElement('button');b.className='tab';b.setAttribute('role','tab');b.textContent='DAY '+(i+1)+' · '+d.n;b.style.setProperty('--c','var('+d.c+')');b.onclick=function(){setDay(i,true)};tabs.appendChild(b)});
+function setDay(i,full){stop();day=i;$('app').style.setProperty('--c','var('+DAYS[i].c+')');
+ [].forEach.call(tabs.children,function(b,j){b.setAttribute('aria-selected',j===i)});
+ var s=DAYS[i].s,r=$('rng');r.max=s.length-1;
+ var tl=$('tl');tl.innerHTML='';s.forEach(function(x,j){var li=document.createElement('li');li.innerHTML='<b></b><span></span>';li.firstChild.textContent=x[0];li.lastChild.textContent=x[1];li.onclick=function(){stop();render(j,false)};tl.appendChild(li)});
+ render(s.length-1,false)}
+function render(n,animate){idx=n;var s=DAYS[day].s;$('rng').value=n;
+ var R=$('routes'),D=$('dots');R.innerHTML='';D.innerHTML='';
+ for(var j=1;j<=n;j++){var a=s[j-1][2],b=s[j][2],air=s[j][4]==='air';
+  var cx=(a[0]+b[0])/2+(b[1]-a[1])*.12,cy=(a[1]+b[1])/2-(b[0]-a[0])*.12;
+  var p=mk('path',{d:'M'+a+' Q'+cx+' '+cy+' '+b,class:'route seg'+(air?' air':'')+((animate&&j===n)?'':' done'),pathLength:1},R)}
+ for(var k=0;k<=n;k++){var q=s[k][2];mk('circle',{cx:q[0],cy:q[1],r:k===n?1.7:1.1,class:'dot'+(k===n?' cur':'')},D)}
+ var c=s[n];$('st').textContent=c[0];$('sn').textContent=(n+1)+'/'+s.length+' · '+c[1];$('sno').textContent=c[3];
+ [].forEach.call($('tl').children,function(li,j){li.className=(j<=n?'on':'')+(j===n?' cur':'')});
+ var cur=$('tl').children[n];if(cur&&cur.scrollIntoView&&animate)cur.parentNode.scrollTop=cur.offsetTop-80}
+function stop(){if(timer){clearInterval(timer);timer=null}$('play').textContent='▶ 재생'}
+$('play').onclick=function(){if(timer){stop();return}
+ var s=DAYS[day].s;var n=idx>=s.length-1?0:idx;render(n,false);$('play').textContent='❚❚ 정지';
+ timer=setInterval(function(){if(idx>=s.length-1){stop();return}render(idx+1,true)},2200)};
+$('prev').onclick=function(){stop();if(idx>0)render(idx-1,false)};
+$('next').onclick=function(){stop();if(idx<DAYS[day].s.length-1)render(idx+1,true)};
+$('rng').oninput=function(){stop();render(+this.value,false)};
+var spend=[['ICOCA(보증금 포함)',3000],['쿠라스시 16점',3395],['리멘트 죠죠 2개',3300],['치이카와 굿즈',1950],['뽑기(실패)',1700],['덴포잔 관람차',900],['이온 하나가쓰오',478]];
+var bars=$('bars');spend.forEach(function(x){var d=document.createElement('div');d.className='bar';d.innerHTML='<span></span><span><i></i></span><span></span>';d.children[0].textContent=x[0];d.children[1].firstChild.style.width=(x[1]/3395*100)+'%';d.children[2].textContent=x[1].toLocaleString()+'엔';bars.appendChild(d)});
+setDay(0);
+</script>
