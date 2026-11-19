@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>결제 실패 | 목포해양대학교 윈드서핑 동아리</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="more.html" data-title="결제 실패">
+
+<div class="container">
+  <section class="card">
+    <h1>결제 실패</h1>
+    <p id="reason" class="muted"></p>
+    <a href="pay.html" class="row"><span>다시 결제하기</span><span class="muted">›</span></a>
+  </section>
+</div>
+
+<script src="assets/nav.js"></script>
+<script>
+  const p = new URLSearchParams(location.search);
+  document.getElementById('reason').textContent =
+    (p.get('message') || '결제가 완료되지 않았습니다.') + (p.get('code') ? ` (${p.get('code')})` : '');
+</script>
+</body>
+</html>

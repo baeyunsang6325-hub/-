@@ -1,0 +1,4 @@
+# 결제 성공 페이지는 로그인 없이 호출하므로 JWT 검증을 끕니다.
+# (금액은 함수 안에서 고정 검증하고, 승인은 토스 서버가 paymentKey로 다시 확인합니다)
+[functions.toss-confirm]
+verify_jwt = false

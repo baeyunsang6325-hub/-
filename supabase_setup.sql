@@ -42,3 +42,20 @@ create policy "Allow anonymous read suggestions"
   for select
   to anon
   using (true);
+
+-- 토스페이먼츠 회비 결제 기록 (Edge Function이 service role로만 기록)
+create table if not exists payments (
+  order_id text primary key,
+  payment_key text not null unique,
+  order_name text,
+  amount integer not null,
+  method text,
+  status text not null,
+  approved_at timestamptz,
+  raw jsonb,
+  created_at timestamptz not null default now()
+);
+
+alter table payments enable row level security;
+-- anon 정책 없음: 결제 내역(개인정보)은 공개 페이지에서 조회/수정 불가.
+-- 운영진은 Supabase 대시보드(Table Editor)에서 확인하세요.

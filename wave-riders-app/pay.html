@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>회비 납부 | 목포해양대학교 윈드서핑 동아리</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="more.html" data-title="회비 납부">
+
+<div class="container">
+
+  <section>
+    <h1>💳 회비 납부</h1>
+    <p class="muted">토스페이먼츠로 안전하게 결제됩니다. 카드 정보는 동아리에 저장되지 않습니다.</p>
+  </section>
+
+  <section class="card">
+    <div class="row"><span>상품</span><span>학기 회비</span></div>
+    <div class="row"><span>금액</span><b id="feeText"></b></div>
+  </section>
+
+  <section class="card">
+    <h2 style="margin-top:0">납부자 정보</h2>
+    <input type="text" id="payerName" placeholder="이름" required>
+    <input type="tel" id="payerPhone" placeholder="연락처 (숫자만)" required>
+    <input type="email" id="payerEmail" placeholder="이메일 (영수증 발송)">
+  </section>
+
+  <div id="payment-method"></div>
+  <div id="agreement"></div>
+
+  <button id="payBtn" disabled>결제하기</button>
+  <p id="payMsg" class="muted"></p>
+
+</div>
+
+<script src="https://js.tosspayments.com/v2/standard"></script>
+<script src="assets/toss-config.js"></script>
+<script src="assets/nav.js"></script>
+<script>
+  (async function () {
+    const payBtn = document.getElementById('payBtn');
+    const msgEl = document.getElementById('payMsg');
+    document.getElementById('feeText').textContent = MEMBERSHIP_FEE.toLocaleString() + '원';
+
+    try {
+      const tossPayments = TossPayments(TOSS_CLIENT_KEY);
+      const widgets = tossPayments.widgets({ customerKey: TossPayments.ANONYMOUS });
+      await widgets.setAmount({ currency: 'KRW', value: MEMBERSHIP_FEE });
+      await Promise.all([
+        widgets.renderPaymentMethods({ selector: '#payment-method', variantKey: 'DEFAULT' }),
+        widgets.renderAgreement({ selector: '#agreement', variantKey: 'AGREEMENT' }),
+      ]);
+      payBtn.disabled = false;
+
+      payBtn.addEventListener('click', async () => {
+        const name = document.getElementById('payerName').value.trim();
+        const phone = document.getElementById('payerPhone').value.replace(/\D/g, '');
+        const email = document.getElementById('payerEmail').value.trim();
+        if (!name || !phone) { msgEl.textContent = '이름과 연락처를 입력해주세요.'; return; }
+
+        const base = location.href.replace(/[^/]*$/, '');
+        try {
+          await widgets.requestPayment({
+            orderId: 'fee-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+            orderName: '윈드서핑 동아리 학기 회비',
+            customerName: name,
+            customerMobilePhone: phone,
+            ...(email ? { customerEmail: email } : {}),
+            successUrl: base + 'pay-success.html',
+            failUrl: base + 'pay-fail.html',
+          });
+        } catch (err) {
+          // 사용자가 결제창을 닫은 경우 등
+          msgEl.textContent = err.message || '결제가 취소되었습니다.';
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      msgEl.textContent = '결제 모듈을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.';
+    }
+  })();
+</script>
+</body>
+</html>
